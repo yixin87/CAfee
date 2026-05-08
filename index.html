@@ -1,0 +1,1579 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>数智咖啡店（论坛版）</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue",sans-serif;background:#f5f6fa;color:#2d3436;width:100%;max-width:480px;margin:0 auto;min-height:100vh;overflow-x:hidden}
+@media(min-width:768px){body{max-width:480px}}
+@media(max-width:360px){body{font-size:14px}}
+.page{display:none;padding-bottom:80px}.page.active{display:block}
+.header{background:linear-gradient(135deg,var(--h),var(--h2));color:#fff;padding:20px 16px 24px;position:relative}
+.header .back{font-size:28px;cursor:pointer;display:inline-block;margin-bottom:6px}
+.header h1{font-size:22px;font-weight:700;display:flex;align-items:center;gap:8px}
+.header .sub{font-size:13px;opacity:.8;margin-top:4px}
+.body{padding:12px 16px}
+.card{background:#fff;border-radius:16px;padding:16px;margin-bottom:14px;box-shadow:0 2px 16px rgba(0,0,0,.06)}
+.card-title{font-size:16px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #f0f1f5;font-size:14px}
+.row:last-child{border:none}.row .label{color:#a4a4b8}.row .val{font-weight:600;color:#2d3436}
+.badge{display:inline-block;padding:3px 12px;border-radius:20px;font-size:12px;font-weight:600}
+.badge-green{background:#e8f8f0;color:#00b894}.badge-blue{background:#eaf0ff;color:#6c5ce7}
+.badge-orange{background:#fff5e6;color:#f39c12}.badge-red{background:#ffeaea;color:#e17055}
+.badge-purple{background:#f0e6ff;color:#6c5ce7}
+.tab-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#fff;display:flex;border-top:1px solid #eee;padding:8px 0 12px;z-index:100}
+.tab-item{flex:1;text-align:center;cursor:pointer;color:#b2bec3;transition:all .2s}
+.tab-item.active{color:#6c5ce7}.tab-item .icon{font-size:24px;margin-bottom:2px}.tab-item .text{font-size:11px;font-weight:500}
+.home-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:-30px;position:relative;z-index:2;padding:0 16px}
+.stat-box{background:#fff;border-radius:14px;padding:16px 10px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,.08)}
+.stat-box .num{font-size:24px;font-weight:800;background:linear-gradient(135deg,#6c5ce7,#a29bfe);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.stat-box .txt{font-size:11px;color:#a4a4b8;margin-top:4px}
+.quick-entry{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.entry-card{border-radius:16px;padding:20px 16px;cursor:pointer;color:#fff;position:relative;overflow:hidden;transition:transform .2s}
+.entry-card:active{transform:scale(.96)}
+.entry-card .eicon{font-size:36px;margin-bottom:10px}.entry-card .ename{font-size:16px;font-weight:700}.entry-card .edesc{font-size:12px;opacity:.8;margin-top:4px}
+/* 员工培训 */
+/* 论坛公用Tab样式 */
+.tab-row{display:flex;gap:0;margin-bottom:14px;background:#f0f1f5;border-radius:12px;padding:3px}
+.tab-btn{flex:1;text-align:center;padding:10px;border-radius:10px;font-size:14px;cursor:pointer;color:#a4a4b8;font-weight:500;transition:all .2s}
+.tab-btn.active{background:#fff;color:#6c5ce7;font-weight:700;box-shadow:0 2px 8px rgba(108,92,231,.15)}
+/* 员工论坛 */
+.forum-post{background:#fff;border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 2px 12px rgba(0,0,0,.06);cursor:pointer;transition:transform .15s}
+.forum-post:active{transform:scale(.98)}
+.forum-post-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.forum-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;font-weight:700;color:#fff}
+.forum-author{flex:1}
+.forum-author .author-name{font-size:13px;font-weight:700;color:#2d3436}
+.forum-author .author-role{font-size:11px;color:#b2bec3;margin-top:1px}
+.forum-tag{font-size:11px;font-weight:600;padding:3px 8px;border-radius:20px}
+.forum-title{font-size:15px;font-weight:700;color:#2d3436;margin-bottom:6px;line-height:1.4}
+.forum-excerpt{font-size:13px;color:#636e72;line-height:1.6;margin-bottom:10px}
+.forum-img{width:100%;height:140px;border-radius:10px;margin-bottom:10px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.forum-footer{display:flex;align-items:center;gap:16px}
+.forum-stat{display:flex;align-items:center;gap:4px;font-size:12px;color:#b2bec3}
+.forum-hot-tag{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;margin-left:auto}
+/* 公告样式 */
+.notice-card{background:#fff;border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.notice-header{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.notice-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;background:linear-gradient(135deg,#6c5ce7,#a29bfe);color:#fff;flex-shrink:0}
+.notice-meta{flex:1}.notice-meta .n-title{font-size:13px;font-weight:700}.notice-meta .n-date{font-size:11px;color:#b2bec3}
+.notice-badge{font-size:11px;padding:2px 8px;border-radius:10px;font-weight:600;white-space:nowrap}
+.notice-body{font-size:14px;font-weight:700;color:#2d3436;margin-bottom:6px}
+.notice-sub{font-size:12px;color:#636e72;line-height:1.6}
+.notice-img{width:100%;height:120px;border-radius:10px;margin-top:10px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+/* 教程样式 */
+.tutorial-item{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid #f5f5f8;cursor:pointer}
+.tutorial-item:last-child{border:none}
+.tutorial-num{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff;flex-shrink:0}
+.tutorial-info{flex:1}
+.tutorial-info h3{font-size:14px;font-weight:700;margin-bottom:3px}
+.tutorial-info p{font-size:12px;color:#a4a4b8;line-height:1.5}
+.tutorial-arrow{color:#d0d0e0;font-size:18px}
+.seat-legend{display:flex;gap:16px;justify-content:center;padding:10px;background:#f8f9fe;border-radius:12px;margin-bottom:14px;font-size:13px;color:#636e72}
+.legend-dot{width:14px;height:14px;border-radius:50%;display:inline-block;margin-right:4px;vertical-align:middle}
+.seat-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:16px}
+.seat{width:100%;aspect-ratio:1;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10px;font-weight:700;cursor:pointer;border:2px solid transparent;transition:all .2s}
+.seat:active{transform:scale(.9)}.seat .sid{font-size:12px;font-weight:800}
+.seat-empty{background:#eef1ff;color:#6c5ce7}.seat-taken{background:#ffeaea;color:#e17055}.seat-booked{background:#fff8e6;color:#f39c12}
+/* 内容运营 */
+.kpi-row{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:14px}
+.kpi-card{background:#fff;border-radius:16px;padding:16px;box-shadow:0 2px 16px rgba(0,0,0,.06);position:relative;overflow:hidden;cursor:pointer;transition:transform .2s}
+.kpi-card:active{transform:scale(.98)}
+.kpi-card .kpi-val{font-size:26px;font-weight:800;margin-bottom:2px}.kpi-card .kpi-label{font-size:12px;color:#a4a4b8}
+.kpi-card .kpi-change{font-size:12px;font-weight:600;margin-top:6px;display:inline-flex;align-items:center;gap:2px;padding:2px 8px;border-radius:10px}
+.kpi-up{color:#00b894;background:#e8f8f0}.kpi-down{color:#e17055;background:#ffeaea}
+.kpi-sub{font-size:10px;color:#a4a4b8;margin-top:4px}
+.chart-box{background:#fff;border-radius:16px;padding:16px;margin-bottom:14px;box-shadow:0 2px 16px rgba(0,0,0,.06)}
+.chart-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.rank-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #f8f8fb;cursor:pointer}
+.rank-item:last-child{border:none}.rank-item:active{background:#fafafe}
+.rank-num{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff;flex-shrink:0}
+.r1{background:linear-gradient(135deg,#fdcb6e,#e17055)}.r2{background:linear-gradient(135deg,#dfe6e9,#b2bec3)}.r3{background:linear-gradient(135deg,#e17055,#d63031)}.rn{background:#f0f1f5;color:#a4a4b8}
+.rank-info{flex:1;min-width:0}.rank-info h4{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rank-info p{font-size:12px;color:#a4a4b8;margin-top:2px}
+.rank-bar{width:60px;height:5px;background:#f0f1f5;border-radius:3px;overflow:hidden;flex-shrink:0}
+.rank-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#6c5ce7,#a29bfe)}
+.heatmap-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px}
+.heat-cell{height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;cursor:pointer;color:#fff;transition:all .2s}
+.heat-cell:active{transform:scale(.92)}
+.h0{background:#dfe6e9;color:#636e72}.h1{background:#74b9ff}.h2{background:#0984e3}.h3{background:#6c5ce7}.h4{background:#2d3436}
+.heat-labels{display:flex;justify-content:space-between;font-size:11px;color:#a4a4b8;padding:0 4px}
+.promo-card{background:#fff;border-radius:16px;padding:16px;margin-bottom:10px;box-shadow:0 2px 12px rgba(0,0,0,.05);cursor:pointer;transition:all .2s}
+.promo-card:active{transform:scale(.98)}
+.promo-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.promo-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center;padding:10px 0}
+.promo-stat .ps-v{font-size:16px;font-weight:700;color:#2d3436}.promo-stat .ps-l{font-size:11px;color:#a4a4b8;margin-top:2px}
+/* 内容运营重构 */
+.module-tab{display:grid;grid-template-columns:repeat(4,1fr);gap:0;background:#f0f1f5;border-radius:14px;padding:3px;margin-bottom:14px}
+.module-tab-btn{padding:10px 4px;border-radius:12px;font-size:12px;font-weight:600;text-align:center;cursor:pointer;color:#a4a4b8;transition:all .2s}
+.module-tab-btn.active{background:#fff;color:#e17055;box-shadow:0 2px 10px rgba(225,112,85,.15)}
+.module-tab-btn .mt-icon{font-size:20px;display:block;margin-bottom:2px}
+.module-panel{display:none}.module-panel.active{display:block}
+.insight-card{background:linear-gradient(135deg,#e17055,#fdcb6e);border-radius:14px;padding:14px;color:#fff;margin-bottom:12px;cursor:pointer;transition:transform .2s}
+.insight-card:active{transform:scale(.98)}
+.insight-card .ic-title{font-size:13px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.insight-card .ic-desc{font-size:12px;opacity:.9;line-height:1.6}
+.flow-stat{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.flow-stat-item{background:#fafafe;border-radius:12px;padding:12px 8px;text-align:center}
+.flow-stat-item .fsi-val{font-size:20px;font-weight:800;color:#e17055}
+.flow-stat-item .fsi-label{font-size:11px;color:#a4a4b8;margin-top:2px}
+.flow-stat-item .fsi-change{font-size:11px;font-weight:600;color:#00b894;margin-top:4px}
+.compare-bar{display:flex;align-items:center;gap:8px;margin-bottom:10px;padding:8px 12px;background:#fafafe;border-radius:10px}
+.compare-bar .cb-label{font-size:12px;color:#636e72;min-width:70px;flex-shrink:0}
+.compare-bar .cb-bar{flex:1;height:8px;background:#f0f1f5;border-radius:4px;overflow:hidden}
+.compare-bar .cb-fill{height:100%;border-radius:4px}
+.compare-bar .cb-val{font-size:13px;font-weight:700;min-width:45px;text-align:right}
+.order-product{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f8f8fb}
+.order-product:last-child{border:none}
+.op-rank{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0}
+.op-name{flex:1;font-size:13px;font-weight:600}.op-amount{font-size:12px;color:#a4a4b8;min-width:50px;text-align:right}
+.op-revenue{font-size:13px;font-weight:700;color:#e17055;min-width:60px;text-align:right}
+.weekly-section{background:#fafafe;border-radius:12px;padding:14px;margin-bottom:12px}
+.weekly-section .ws-title{font-size:14px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.weekly-item{display:flex;gap:8px;margin-bottom:8px;font-size:13px;line-height:1.6}
+.weekly-item:last-child{margin-bottom:0}
+.wi-dot{width:6px;height:6px;border-radius:50%;margin-top:7px;flex-shrink:0}
+.wi-text{flex:1;color:#636e72}
+.ai-gen-box{background:linear-gradient(135deg,#6c5ce7,#a29bfe);border-radius:14px;padding:16px;color:#fff;margin-bottom:12px;cursor:pointer;transition:transform .2s}
+.ai-gen-box:active{transform:scale(.98)}
+.ai-gen-box .agb-title{font-size:14px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.ai-gen-box .agb-desc{font-size:12px;opacity:.85;line-height:1.5}
+.ai-content-preview{background:#fff;border-radius:12px;padding:14px;margin-bottom:10px;border:1px solid #f0f1f5}
+.acp-platform{display:inline-block;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:600;margin-bottom:8px}
+.acp-title{font-size:13px;font-weight:700;margin-bottom:4px}.acp-text{font-size:12px;color:#636e72;line-height:1.6}
+/* 弹窗通用 */
+.overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.45);z-index:200;align-items:flex-end;justify-content:center}
+.overlay.show{display:flex}
+.sheet{background:#fff;border-radius:24px 24px 0 0;padding:24px 20px 40px;width:100%;max-width:414px;max-height:88vh;overflow-y:auto;animation:slideUp .3s ease}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.sheet-handle{width:40px;height:4px;background:#dfe6e9;border-radius:2px;margin:0 auto 20px}
+.sheet-title{font-size:18px;font-weight:700;margin-bottom:18px;text-align:center}
+.detail-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+.detail-stat{text-align:center;padding:10px 4px;background:#fafafe;border-radius:10px}
+.detail-stat .ds-val{font-size:18px;font-weight:800;color:#6c5ce7}.detail-stat .ds-label{font-size:10px;color:#a4a4b8;margin-top:2px}
+.sd-item{background:#fafafe;border-radius:12px;padding:12px;text-align:center}
+.sd-item .sdv{font-size:18px;font-weight:700}.sd-item .sdl{font-size:11px;color:#a4a4b8;margin-top:2px}
+.order-tag{display:inline-block;padding:6px 14px;background:#eef1ff;border-radius:20px;font-size:13px;font-weight:500;color:#6c5ce7;margin:3px}
+/* 详情弹窗新增样式 */
+.section-title{font-size:14px;font-weight:700;margin:16px 0 10px;display:flex;align-items:center;gap:6px}
+.tag-group{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.tag{display:inline-block;padding:5px 12px;background:#f0f1f5;border-radius:20px;font-size:12px;color:#636e72}
+.tag-purple{background:#f0e6ff;color:#6c5ce7}.tag-green{background:#e8f8f0;color:#00b894}.tag-orange{background:#fff5e6;color:#f39c12}
+.mini-bar{height:8px;background:#f0f1f5;border-radius:4px;margin:6px 0;overflow:hidden}
+.mini-bar-fill{height:100%;border-radius:4px}
+.funnel-step{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.funnel-bar{height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:600;transition:width .3s}
+.comment-item{padding:10px 0;border-bottom:1px solid #f5f5f8;font-size:13px}
+.comment-item:last-child{border:none}
+.comment-name{font-weight:600;color:#6c5ce7;margin-bottom:2px}
+.comment-text{color:#636e72;line-height:1.5}
+.comment-meta{font-size:11px;color:#a4a4b8;margin-top:4px}
+.star{color:#fdcb6e;font-size:12px}
+.goal-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.goal-label{font-size:12px;color:#636e72;min-width:60px}
+.goal-bar{height:10px;flex:1;background:#f0f1f5;border-radius:5px;overflow:hidden}
+.goal-fill{height:100%;border-radius:5px}
+.goal-val{font-size:12px;font-weight:600;min-width:50px;text-align:right}
+/* KPI详情弹窗 */
+.kpi-detail-row{display:flex;justify-content:space-between;padding:8px 0;font-size:13px;border-bottom:1px solid #f8f8fb}
+.kpi-detail-row .kl{color:#a4a4b8}.kpi-detail-row .kv{font-weight:600}
+
+    /* 内容效果增强样式 */
+    .flow-stat{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+    .flow-stat-item{background:#fafafe;border-radius:12px;padding:12px 8px;text-align:center}
+    .flow-stat-item .fsi-val{font-size:18px;font-weight:800;color:#e17055}
+    .flow-stat-item .fsi-label{font-size:11px;color:#a4a4b8;margin-top:2px}
+    .flow-stat-item .fsi-change{font-size:11px;font-weight:600;color:#00b894;margin-top:4px}
+    .heat-legend{display:flex;align-items:center;gap:6px;justify-content:center;margin-top:8px}
+    /* 转化漏斗 */
+    .funnel-step{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+    .funnel-bar{flex:1;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700;transition:all .3s}
+    .funnel-label{min-width:70px;font-size:12px;color:#636e72;text-align:right}
+    .funnel-value{min-width:50px;font-size:12px;color:#a4a4b8;text-align:center}
+    .funnel-rate{min-width:55px;font-size:12px;font-weight:700;color:#00b894;text-align:left}
+    /* 增强版排行榜 */
+    .rank-card{background:#fafafe;border-radius:14px;padding:14px;margin-bottom:10px;cursor:pointer;transition:transform .2s;border-left:4px solid transparent}
+    .rank-card:active{transform:scale(.98)}
+    .rank-card.rank-1{border-left-color:#fdcb6e}
+    .rank-card.rank-2{border-left-color:#b2bec3}
+    .rank-card.rank-3{border-left-color:#e17055}
+    .rank-card-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+    .rank-card-badge{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff}
+    .rank-card-name{flex:1;font-size:14px;font-weight:600}
+    .rank-card-platform{font-size:11px;padding:2px 8px;border-radius:8px;font-weight:600}
+    .rank-card-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px}
+    .rcm-item{text-align:center}
+    .rcm-val{font-size:14px;font-weight:700;color:#2d3436}
+    .rcm-label{font-size:10px;color:#a4a4b8;margin-top:2px}
+    .rank-card-sparkline{height:24px;margin-top:8px;display:flex;align-items:flex-end;gap:2px}
+    .rank-card-sparkline .bar{background:#6c5ce7;border-radius:2px 2px 0 0;flex:1;min-width:3px;opacity:.6;transition:opacity .2s}
+    .rank-card-sparkline .bar.active{opacity:1;background:linear-gradient(0deg,#6c5ce7,#a29bfe)}
+    /* 渠道多维对比 */
+    .channel-compare-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f8f8fb}
+    .channel-compare-item:last-child{border:none}
+    .cci-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+    .cci-info{flex:1}
+    .cci-name{font-size:13px;font-weight:600;color:#2d3436}
+    .cci-detail{font-size:11px;color:#a4a4b8;margin-top:2px}
+    .cci-metrics{display:flex;gap:10px;flex-shrink:0}
+    .cci-metric{text-align:center}
+    .cci-metric-val{font-size:13px;font-weight:700}
+    .cci-metric-label{font-size:10px;color:#a4a4b8}
+    .cci-trend{font-size:12px;font-weight:600;min-width:50px;text-align:right}
+
+  </style>
+</head>
+<body>
+
+<!-- 首页 -->
+<div class="page active" id="page-home" style="--h:#6c5ce7;--h2:#a29bfe">
+  <div class="header" style="--h:#6c5ce7;--h2:#a29bfe">
+    <h1>☕ 数智咖啡店</h1>
+    <div class="sub">智能管理 · 高效运营</div>
+  </div>
+  <div class="home-stats">
+    <div class="stat-box"><div class="num">156</div><div class="txt">今日客流</div></div>
+    <div class="stat-box"><div class="num">¥4,280</div><div class="txt">今日营收</div></div>
+    <div class="stat-box"><div class="num">22/25</div><div class="txt">座位使用</div></div>
+  </div>
+  <div class="body">
+    <div class="card-title" style="margin-top:10px">⚡ 快捷入口</div>
+    <div class="quick-entry">
+      <div class="entry-card" style="background:linear-gradient(135deg,#6c5ce7,#a29bfe)" onclick="go('staff')">
+        <div class="eicon">📚</div><div class="ename">员工论坛</div><div class="edesc">社区交流 · 知识沉淀</div>
+      </div>
+      <div class="entry-card" style="background:linear-gradient(135deg,#00b894,#55efc4)" onclick="go('seat')">
+        <div class="eicon">🪑</div><div class="ename">座位管理</div><div class="edesc">实时监控 · 智能分配</div>
+      </div>
+      <div class="entry-card" style="background:linear-gradient(135deg,#e17055,#fdcb6e)" onclick="go('content')">
+        <div class="eicon">📊</div><div class="ename">内容运营</div><div class="edesc">数据看板 · 效果分析 · 周报AI</div>
+      </div>
+    </div>
+    <!-- 首页新增：今日数据概览 -->
+    <div class="chart-box" style="margin-top:14px">
+      <div class="chart-header"><h3 style="font-size:15px;font-weight:700">📈 今日客流趋势</h3><span style="font-size:12px;color:#00b894;cursor:pointer" onclick="go('content')">查看详情 ›</span></div>
+      <canvas id="homeFlowChart" height="160" style="width:100%"></canvas>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <div class="card-title">⚡ 快捷操作</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+        <div style="text-align:center;cursor:pointer;padding:10px 0;border-radius:12px;background:#f8f6ff;transition:transform .2s" onclick="go('content')" onmouseover="this.style.transform='scale(0.96)'" onmouseout="this.style.transform='scale(1)'">
+          <div style="font-size:24px;margin-bottom:4px">📊</div><div style="font-size:11px;color:#636e72;font-weight:600">内容看板</div>
+        </div>
+        <div style="text-align:center;cursor:pointer;padding:10px 0;border-radius:12px;background:#f0faf5;transition:transform .2s" onclick="go('seat')" onmouseover="this.style.transform='scale(0.96)'" onmouseout="this.style.transform='scale(1)'">
+          <div style="font-size:24px;margin-bottom:4px">🪑</div><div style="font-size:11px;color:#636e72;font-weight:600">座位管理</div>
+        </div>
+        <div style="text-align:center;cursor:pointer;padding:10px 0;border-radius:12px;background:#fff5e6;transition:transform .2s" onclick="alert('打卡功能')" onmouseover="this.style.transform='scale(0.96)'" onmouseout="this.style.transform='scale(1)'">
+          <div style="font-size:24px;margin-bottom:4px">✅</div><div style="font-size:11px;color:#636e72;font-weight:600">一键打卡</div>
+        </div>
+        <div style="text-align:center;cursor:pointer;padding:10px 0;border-radius:12px;background:#ffeef3;transition:transform .2s" onclick="alert('经营日报')" onmouseover="this.style.transform='scale(0.96)'" onmouseout="this.style.transform='scale(1)'">
+          <div style="font-size:24px;margin-bottom:4px">📋</div><div style="font-size:11px;color:#636e72;font-weight:600">经营日报</div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <div class="card-title">🔥 实时热销 TOP3</div>
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f8f8fb">
+        <div style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#fdcb6e,#e17055);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:13px">1</div>
+        <div style="flex:1;font-size:13px;font-weight:600">樱花拿铁</div>
+        <div style="font-size:12px;color:#e17055;font-weight:700">52杯</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f8f8fb">
+        <div style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#dfe6e9,#b2bec3);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:13px">2</div>
+        <div style="flex:1;font-size:13px;font-weight:600">美式咖啡</div>
+        <div style="font-size:12px;color:#636e72;font-weight:700">38杯</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 0">
+        <div style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#e17055,#d63031);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:13px">3</div>
+        <div style="flex:1;font-size:13px;font-weight:600">拿铁</div>
+        <div style="font-size:12px;color:#636e72;font-weight:700">34杯</div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <div class="card-title">💡 智能提醒</div>
+      <div style="background:linear-gradient(135deg,#fff5e6,#fff8f0);border-radius:12px;padding:12px;margin-bottom:8px;cursor:pointer" onclick="this.style.display='none'">
+        <div style="font-size:13px;font-weight:700;color:#f39c12;margin-bottom:4px">⏰ 客流预警</div>
+        <div style="font-size:12px;color:#636e72;line-height:1.6">当前14-15时为客流高峰，建议增派1名服务人员。预计持续至16:30。</div>
+      </div>
+      <div style="background:linear-gradient(135deg,#e8f8f0,#f0faf5);border-radius:12px;padding:12px;cursor:pointer" onclick="this.style.display='none'">
+        <div style="font-size:13px;font-weight:700;color:#00b894;margin-bottom:4px">📦 库存提醒</div>
+        <div style="font-size:12px;color:#636e72;line-height:1.6">樱花糖浆剩余2瓶，建议今日补货。日均消耗0.8瓶，预计3天后告罄。</div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <div class="card-title">📋 今日待办</div>
+      <div class="row"><span class="label">新员工入职培训</span><span class="badge badge-orange">进行中</span></div>
+      <div class="row"><span class="label">季度运营报告</span><span class="badge badge-blue">待提交</span></div>
+      <div class="row"><span class="label">新品推广活动</span><span class="badge badge-green">已上线</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- 员工论坛 -->
+<div class="page" id="page-staff" style="--h:#6c5ce7;--h2:#a29bfe">
+  <div class="header" style="--h:#6c5ce7;--h2:#a29bfe">
+    <span class="back" onclick="go('home')">&#8249;</span>
+    <h1>📚 内部知识社区</h1>
+    <div class="sub">交流分享、经验沉淀、资料共享，打造高效的内部学习协作平台。</div>
+  </div>
+  <div class="body">
+    <div class="tab-row" id="staff-tabs">
+      <div class="tab-btn active" onclick="switchStaffTab(0)">推荐</div>
+      <div class="tab-btn" onclick="switchStaffTab(1)">公告</div>
+      <div class="tab-btn" onclick="switchStaffTab(2)">教程</div>
+      <div class="tab-btn" onclick="switchStaffTab(3)">交流</div>
+    </div>
+
+    <!-- 推荐 -->
+    <div id="staff-panel-0">
+      <div class="forum-post" onclick="alert('帖子详情')">
+        <div class="forum-post-header">
+          <div class="forum-avatar" style="background:linear-gradient(135deg,#6c5ce7,#a29bfe)">管</div>
+          <div class="forum-author">
+            <div class="author-name">管理员</div>
+            <div class="author-role">系统官方 · 2小时前</div>
+          </div>
+          <span class="forum-tag" style="background:#ffeaea;color:#e17055">🔥 热门</span>
+        </div>
+        <div class="forum-title">新员工入门指南 | 内部规范与基础流程汇总</div>
+        <div class="forum-excerpt">汇总入职必备须知、日常工作规范与系统操作流程，帮助新员工快速融入团队、上手工作。</div>
+        <div class="forum-img" style="background:linear-gradient(135deg,#2d3436,#636e72);overflow:hidden"><span style="font-size:48px;filter:grayscale(0.2)">☕</span></div>
+        <div class="forum-footer">
+          <span class="forum-stat">🔥 24</span>
+          <span class="forum-stat">⭐ 31</span>
+          <span class="forum-stat">💬 18</span>
+        </div>
+      </div>
+      <div class="forum-post" onclick="alert('帖子详情')">
+        <div class="forum-post-header">
+          <div class="forum-avatar" style="background:linear-gradient(135deg,#00b894,#55efc4)">资</div>
+          <div class="forum-author">
+            <div class="author-name">资深员工</div>
+            <div class="author-role">高级咖啡师 · 昨天</div>
+          </div>
+          <span class="forum-tag" style="background:#e8f8f0;color:#00b894">经验</span>
+        </div>
+        <div class="forum-title">工作效率提升技巧 | 日常流程优化经验分享</div>
+        <div class="forum-excerpt">分享实用办公方法与流程梳理技巧，减少重复工作、合理规划时间，提升整体办公效率。</div>
+        <div class="forum-img" style="background:linear-gradient(135deg,#2c3e50,#fd7272)"><span style="font-size:48px">🌆</span></div>
+        <div class="forum-footer">
+          <span class="forum-stat">🔥 18</span>
+          <span class="forum-stat">⭐ 22</span>
+          <span class="forum-stat">💬 9</span>
+        </div>
+      </div>
+      <div class="forum-post" onclick="alert('帖子详情')">
+        <div class="forum-post-header">
+          <div class="forum-avatar" style="background:linear-gradient(135deg,#e17055,#fdcb6e)">员</div>
+          <div class="forum-author">
+            <div class="author-name">员工分享</div>
+            <div class="author-role">收银员 · 3天前</div>
+          </div>
+          <span class="forum-tag" style="background:#fff5e6;color:#f39c12">生活</span>
+        </div>
+        <div class="forum-title">今天遇到了一位超级有耐心的常客，感触很深</div>
+        <div class="forum-excerpt">工作中遇到暖心小故事，希望大家都能保持热情，每一杯咖啡都是用心的陪伴。</div>
+        <div class="forum-footer">
+          <span class="forum-stat">🔥 11</span>
+          <span class="forum-stat">⭐ 15</span>
+          <span class="forum-stat">💬 7</span>
+          <span class="forum-hot-tag" style="background:#fff5e6;color:#f39c12">🏆 本周好评</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 公告 -->
+    <div id="staff-panel-1" style="display:none">
+      <div class="notice-card">
+        <div class="notice-header">
+          <div class="notice-icon">公</div>
+          <div class="notice-meta"><div class="n-title">官方公告</div><div class="n-date">2026-05-08 · 管理层发布</div></div>
+          <span class="notice-badge" style="background:#ffeaea;color:#e17055">📌 置顶</span>
+        </div>
+        <div class="notice-body">内部管理制度与行为准则正式公示</div>
+        <div class="notice-sub">全体成员请认真阅读并遵守最新工作规范。新规范涵盖考勤、服务标准与客户沟通礼仪三项更新。</div>
+        <div class="notice-img" style="background:linear-gradient(135deg,#ffecd2,#fcb69f)"><span style="font-size:40px">🍓</span></div>
+      </div>
+      <div class="notice-card">
+        <div class="notice-header">
+          <div class="notice-icon" style="background:linear-gradient(135deg,#00b894,#55efc4)">公</div>
+          <div class="notice-meta"><div class="n-title">活动通知</div><div class="n-date">2026-05-06 · 运营部发布</div></div>
+          <span class="notice-badge" style="background:#e8f8f0;color:#00b894">新活动</span>
+        </div>
+        <div class="notice-body">五一假期门店营业安排公告</div>
+        <div class="notice-sub">5月1日至5月5日按正常班次营业，值班人员已安排，请各岗位提前确认排班表。</div>
+      </div>
+      <div class="notice-card">
+        <div class="notice-header">
+          <div class="notice-icon" style="background:linear-gradient(135deg,#fdcb6e,#e17055)">公</div>
+          <div class="notice-meta"><div class="n-title">系统通知</div><div class="n-date">2026-05-01 · 技术部门</div></div>
+          <span class="notice-badge" style="background:#fff5e6;color:#f39c12">系统</span>
+        </div>
+        <div class="notice-body">收银系统将于5月10日升级维护</div>
+        <div class="notice-sub">维护时间为当日22:00至次日00:30，期间无法使用电子支付，请提前告知当值人员做好应对预案。</div>
+      </div>
+      <div class="notice-card">
+        <div class="notice-header">
+          <div class="notice-icon" style="background:linear-gradient(135deg,#a29bfe,#6c5ce7)">公</div>
+          <div class="notice-meta"><div class="n-title">福利公告</div><div class="n-date">2026-04-28 · 人事部</div></div>
+          <span class="notice-badge" style="background:#eef1ff;color:#6c5ce7">福利</span>
+        </div>
+        <div class="notice-body">员工生日福利升级：免费饮品券×3 + 精品礼盒</div>
+        <div class="notice-sub">新福利方案已正式生效，当月生日员工可至人事处领取，详情联系HR小王。</div>
+      </div>
+    </div>
+
+    <!-- 教程 -->
+    <div id="staff-panel-2" style="display:none">
+      <div class="card">
+        <div class="card-title" style="color:#e17055">☕ 饮品制作系列</div>
+        <div class="tutorial-item" onclick="alert('教程详情')">
+          <div class="tutorial-num" style="background:linear-gradient(135deg,#e17055,#fdcb6e)">1</div>
+          <div class="tutorial-info"><h3>饮品制作标准化</h3><p>原料配比、制作流程、出品外观统一规范、设备操作与保养流程标准化。</p></div>
+          <div class="tutorial-arrow">›</div>
+        </div>
+        <div class="tutorial-item" onclick="alert('教程详情')">
+          <div class="tutorial-num" style="background:linear-gradient(135deg,#00b894,#55efc4)">2</div>
+          <div class="tutorial-info"><h3>服务礼仪标准化</h3><p>点餐话术、仪容仪表、沟通规范统一，确保服务专业、温和、无缺单。</p></div>
+          <div class="tutorial-arrow">›</div>
+        </div>
+        <div class="tutorial-item" onclick="alert('教程详情')">
+          <div class="tutorial-num" style="background:linear-gradient(135deg,#6c5ce7,#a29bfe)">3</div>
+          <div class="tutorial-info"><h3>清洁规范标准化</h3><p>清洁频次、工具使用、消毒流程、物料摆放统一标准。</p></div>
+          <div class="tutorial-arrow">›</div>
+        </div>
+        <div class="tutorial-item" onclick="alert('教程详情')">
+          <div class="tutorial-num" style="background:linear-gradient(135deg,#fdcb6e,#f39c12)">4</div>
+          <div class="tutorial-info"><h3>应急处理标准化</h3><p>投诉处理、饮品退换、设备故障、安全事件五步标准处理流程。</p></div>
+          <div class="tutorial-arrow">›</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="color:#6c5ce7">📱 系统操作指引</div>
+        <div class="tutorial-item" onclick="alert('教程详情')">
+          <div class="tutorial-num" style="background:linear-gradient(135deg,#6c5ce7,#a29bfe)">1</div>
+          <div class="tutorial-info"><h3>收银系统新手入门</h3><p>点单、支付、退款、会员绑定全流程操作说明。</p></div>
+          <div class="tutorial-arrow">›</div>
+        </div>
+        <div class="tutorial-item" onclick="alert('教程详情')">
+          <div class="tutorial-num" style="background:linear-gradient(135deg,#0984e3,#74b9ff)">2</div>
+          <div class="tutorial-info"><h3>库存管理系统操作</h3><p>入库登记、日耗录入、低库预警、盘点操作全流程。</p></div>
+          <div class="tutorial-arrow">›</div>
+        </div>
+        <div class="tutorial-item" onclick="alert('教程详情')">
+          <div class="tutorial-num" style="background:linear-gradient(135deg,#e17055,#fdcb6e)">3</div>
+          <div class="tutorial-info"><h3>会员积分与活动配置</h3><p>会员等级规则、积分兑换设置、限时活动创建与下架。</p></div>
+          <div class="tutorial-arrow">›</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 交流 -->
+    <div id="staff-panel-3" style="display:none">
+      <div class="forum-post" onclick="alert('帖子详情')">
+        <div class="forum-post-header">
+          <div class="forum-avatar" style="background:linear-gradient(135deg,#00b894,#55efc4)">员</div>
+          <div class="forum-author">
+            <div class="author-name">员工分享</div>
+            <div class="author-role">咖啡师 · 1小时前</div>
+          </div>
+          <span class="forum-tag" style="background:#e8f8f0;color:#00b894">经验</span>
+        </div>
+        <div class="forum-title">工作经验交流 | 高效办公技巧分享</div>
+        <div class="forum-excerpt">分享日常工作小技巧、流程优化方法、互相学习提升工作效率。</div>
+        <div class="forum-img" style="background:linear-gradient(135deg,#c9d6df,#667eea)"><span style="font-size:48px">🏔</span></div>
+        <div class="forum-footer">
+          <span class="forum-stat">🔥 15</span>
+          <span class="forum-stat">⭐ 20</span>
+          <span class="forum-stat">💬 12</span>
+        </div>
+      </div>
+      <div class="forum-post" onclick="alert('帖子详情')">
+        <div class="forum-post-header">
+          <div class="forum-avatar" style="background:linear-gradient(135deg,#fdcb6e,#e17055)">新</div>
+          <div class="forum-author">
+            <div class="author-name">新人求助</div>
+            <div class="author-role">实习生 · 3小时前</div>
+          </div>
+          <span class="forum-tag" style="background:#fff5e6;color:#f39c12">问答</span>
+        </div>
+        <div class="forum-title">第一次遇到客户投诉，有点慌，求支招🙏</div>
+        <div class="forum-excerpt">今天一位客人说咖啡偏淡要求重做，我不知道该怎么处理，希望前辈分享一下处理经验。</div>
+        <div class="forum-footer">
+          <span class="forum-stat">🔥 8</span>
+          <span class="forum-stat">⭐ 6</span>
+          <span class="forum-stat">💬 14</span>
+          <span class="forum-hot-tag" style="background:#fff5e6;color:#f39c12">💬 热议</span>
+        </div>
+      </div>
+      <div class="forum-post" onclick="alert('帖子详情')">
+        <div class="forum-post-header">
+          <div class="forum-avatar" style="background:linear-gradient(135deg,#6c5ce7,#a29bfe)">资</div>
+          <div class="forum-author">
+            <div class="author-name">资深咖啡师</div>
+            <div class="author-role">6年经验 · 昨天</div>
+          </div>
+          <span class="forum-tag" style="background:#eef1ff;color:#6c5ce7">技术</span>
+        </div>
+        <div class="forum-title">手冲咖啡水温控制心得，做了个小总结</div>
+        <div class="forum-excerpt">不同豆种的最佳冲泡温度对比、水流速度对风味的影响，实测数据整理分享。</div>
+        <div class="forum-footer">
+          <span class="forum-stat">🔥 32</span>
+          <span class="forum-stat">⭐ 47</span>
+          <span class="forum-stat">💬 23</span>
+          <span class="forum-hot-tag" style="background:#eef1ff;color:#6c5ce7">📌 精华</span>
+        </div>
+      </div>
+      <div style="position:fixed;bottom:90px;right:20px;z-index:200">
+        <div onclick="alert('发帖功能')" style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#6c5ce7,#a29bfe);display:flex;align-items:center;justify-content:center;font-size:26px;color:#fff;box-shadow:0 4px 16px rgba(108,92,231,.4);cursor:pointer">✏️</div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- 座位管理 -->
+<div class="page" id="page-seat" style="--h:#00b894;--h2:#55efc4">
+  <div class="header" style="--h:#00b894;--h2:#55efc4">
+    <span class="back" onclick="go('home')">‹</span>
+    <h1>🪑 座位管理</h1>
+    <div class="sub">实时座位监控 · 智能管理</div>
+  </div>
+  <div class="body">
+    <div class="seat-legend">
+      <span><span class="legend-dot" style="background:#eef1ff;border:2px solid #d5d9f0"></span>空座</span>
+      <span><span class="legend-dot" style="background:#ffeaea"></span>已占</span>
+      <span><span class="legend-dot" style="background:#fff8e6"></span>预订</span>
+    </div>
+    <div class="card"><div class="card-title">🪟 A区 · 靠窗座位</div><div class="seat-grid" id="grid-a"></div></div>
+    <div class="card"><div class="card-title">🌿 B区 · 绿植区</div><div class="seat-grid" id="grid-b"></div></div>
+    <div class="card"><div class="card-title">📚 C区 · 阅读角</div><div class="seat-grid" id="grid-c"></div></div>
+  </div>
+</div>
+
+<!-- 内容运营 -->
+<div class="page" id="page-content" style="--h:#e17055;--h2:#fdcb6e">
+  <div class="header" style="--h:#e17055;--h2:#fdcb6e">
+    <span class="back" onclick="go('home')">‹</span>
+    <h1>📊 内容运营</h1>
+    <div class="sub">数据看板 · 效果分析</div>
+  </div>
+  <div class="body">
+    <!-- 模块Tab -->
+    <div class="module-tab" id="module-tabs">
+      <div class="module-tab-btn active" onclick="switchModule(0)"><span class="mt-icon">👥</span>客流统计</div>
+      <div class="module-tab-btn" onclick="switchModule(1)"><span class="mt-icon">📱</span>内容效果</div>
+      <div class="module-tab-btn" onclick="switchModule(2)"><span class="mt-icon">💰</span>订单分析</div>
+      <div class="module-tab-btn" onclick="switchModule(3)"><span class="mt-icon">📊</span>周报&AI</div>
+    </div>
+
+    <!-- ===== 模块1：客流数据统计 ===== -->
+    <div class="module-panel active" id="module-0">
+      <div class="flow-stat">
+        <div class="flow-stat-item"><div class="fsi-val">156</div><div class="fsi-label">今日客流</div><div class="fsi-change">↑ 12.3%</div></div>
+        <div class="flow-stat-item"><div class="fsi-val">88%</div><div class="fsi-label">座位利用率</div><div class="fsi-change">↑ 5.2%</div></div>
+        <div class="flow-stat-item"><div class="fsi-val">A区</div><div class="fsi-label">热门区域</div><div class="fsi-change" style="color:#f39c12">靠窗位</div></div>
+      </div>
+      <div class="chart-box"><div class="chart-header"><h3 style="font-size:15px;font-weight:700">📈 今日时段客流</h3><span style="font-size:12px;color:#a4a4b8">单位：人</span></div><canvas id="flowChart" height="200" style="width:100%"></canvas></div>
+      <div class="card">
+        <div class="card-title">🔥 热门区域排行</div>
+        <div class="compare-bar"><span class="cb-label">🪟 A区·靠窗</span><div class="cb-bar"><div class="cb-fill" style="width:95%;background:linear-gradient(90deg,#e17055,#fdcb6e)"></div></div><span class="cb-val">95%</span></div>
+        <div class="compare-bar"><span class="cb-label">🌿 B区·绿植</span><div class="cb-bar"><div class="cb-fill" style="width:72%;background:linear-gradient(90deg,#00b894,#55efc4)"></div></div><span class="cb-val">72%</span></div>
+        <div class="compare-bar"><span class="cb-label">📚 C区·阅读</span><div class="cb-bar"><div class="cb-fill" style="width:58%;background:linear-gradient(90deg,#6c5ce7,#a29bfe)"></div></div><span class="cb-val">58%</span></div>
+      </div>
+      <div class="card">
+        <div class="card-title">⏰ 本周每日客流</div>
+        <div class="compare-bar"><span class="cb-label">周一</span><div class="cb-bar"><div class="cb-fill" style="width:68%;background:#e17055"></div></div><span class="cb-val">136人</span></div>
+        <div class="compare-bar"><span class="cb-label">周二</span><div class="cb-bar"><div class="cb-fill" style="width:72%;background:#e17055"></div></div><span class="cb-val">142人</span></div>
+        <div class="compare-bar"><span class="cb-label">周三</span><div class="cb-bar"><div class="cb-fill" style="width:65%;background:#e17055"></div></div><span class="cb-val">128人</span></div>
+        <div class="compare-bar"><span class="cb-label">周四</span><div class="cb-bar"><div class="cb-fill" style="width:75%;background:#e17055"></div></div><span class="cb-val">148人</span></div>
+        <div class="compare-bar"><span class="cb-label">周五</span><div class="cb-bar"><div class="cb-fill" style="width:82%;background:#e17055"></div></div><span class="cb-val">162人</span></div>
+        <div class="compare-bar"><span class="cb-label">周六</span><div class="cb-bar"><div class="cb-fill" style="width:95%;background:#e17055"></div></div><span class="cb-val">188人</span></div>
+        <div class="compare-bar"><span class="cb-label">周日</span><div class="cb-bar"><div class="cb-fill" style="width:80%;background:#f39c12"></div></div><span class="cb-val">156人</span></div>
+      </div>
+      <div class="insight-card" onclick="openFlowInsight()">
+        <div class="ic-title">💡 智能洞察</div>
+        <div class="ic-desc">今日14-16时为客流高峰（48人），建议提前备货。A区靠窗座位全天满座率95%，可考虑增设座位或设置预约优先。</div>
+      </div>
+    </div>
+
+        <!-- ===== 模块2：内容效果追踪（重构版） ===== -->
+    <div class="module-panel" id="module-1">
+      <!-- KPI卡片 -->
+      <div class="flow-stat">
+        <div class="flow-stat-item"><div class="fsi-val">10,049</div><div class="fsi-label">7日总浏览</div><div class="fsi-change">↑ 23.5%</div></div>
+        <div class="flow-stat-item"><div class="fsi-val">1,732</div><div class="fsi-label">总互动量</div><div class="fsi-change">↑ 18.2%</div></div>
+        <div class="flow-stat-item"><div class="fsi-val">268</div><div class="fsi-label">到店转化</div><div class="fsi-change">↑ 31.6%</div></div>
+        <div class="flow-stat-item"><div class="fsi-val">8.5%</div><div class="fsi-label">平均转化率</div><div class="fsi-change" style="color:#f39c12">↑ 2.1%</div></div>
+      </div>
+
+      <!-- 图表1：浏览量 vs 到店客流（双轴） -->
+      <div class="chart-box">
+        <div class="chart-header">
+          <h3 style="font-size:15px;font-weight:700">📱 内容浏览 → 到店转化趋势</h3>
+        </div>
+        <canvas id="contentFlowChart" height="220" style="width:100%"></canvas>
+        <div style="display:flex;gap:16px;justify-content:center;margin-top:8px;font-size:12px">
+          <span style="color:#e17055">● 浏览量</span>
+          <span style="color:#00b894">● 到店人数</span>
+          <span style="color:#6c5ce7">● 转化率</span>
+        </div>
+      </div>
+
+      <!-- 图表2：内容效果热力图（7天×4个时段） -->
+      <div class="chart-box">
+        <div class="chart-header">
+          <h3 style="font-size:15px;font-weight:700">🔥 内容效果热力图</h3>
+          <span style="font-size:12px;color:#a4a4b8">点击量/互动量</span>
+        </div>
+        <canvas id="contentHeatmap" height="200" style="width:100%"></canvas>
+        <div class="heat-legend" style="display:flex;justify-content:center;gap:4px;margin-top:8px;font-size:11px;color:#a4a4b8">
+          <span>低</span><span style="display:inline-block;width:60px;height:8px;border-radius:4px;background:linear-gradient(90deg,#dfe6e9,#74b9ff,#0984e3,#6c5ce7,#e17055)"></span><span>高</span>
+        </div>
+      </div>
+
+      <!-- 转化漏斗 -->
+      <div class="chart-box">
+        <div class="chart-header">
+          <h3 style="font-size:15px;font-weight:700">🔄 内容转化漏斗</h3>
+        </div>
+        <div id="funnel-chart" style="padding:10px 0"></div>
+        <canvas id="funnelCanvas" height="180" style="width:100%"></canvas>
+      </div>
+
+      <!-- 平台分布（环形图） -->
+      <div class="chart-box">
+        <div class="chart-header">
+          <h3 style="font-size:15px;font-weight:700">📊 平台流量分布</h3>
+        </div>
+        <canvas id="platformDonut" height="200" style="width:100%"></canvas>
+        <div id="donut-legend" style="display:flex;justify-content:center;gap:12px;margin-top:8px;font-size:12px;flex-wrap:wrap"></div>
+      </div>
+
+      <!-- 内容效果排行榜（增强版） -->
+      <div class="card">
+        <div class="card-title">🏆 内容效果排行榜</div>
+        <div id="content-rank-enhanced"></div>
+      </div>
+
+      <!-- 渠道效果对比（增强版） -->
+      <div class="card">
+        <div class="card-title">📊 渠道效果多维对比</div>
+        <div id="channel-compare-enhanced"></div>
+      </div>
+
+      <!-- AI内容分析 -->
+      <div class="insight-card" style="background:linear-gradient(135deg,#6c5ce7,#a29bfe)" onclick="openContentInsight()">
+        <div class="ic-title">💡 AI内容分析</div>
+        <div class="ic-desc">小红书樱花拿铁笔记转化率8.5%，远超均值。建议增加同类产品种草内容，每周3篇以上。</div>
+      </div>
+    </div>
+    <!-- ===== 模块3：订单消费分析 ===== -->
+    <div class="module-panel" id="module-2">
+      <div class="flow-stat">
+        <div class="flow-stat-item"><div class="fsi-val">¥4,280</div><div class="fsi-label">今日营收</div><div class="fsi-change">↑ 15.8%</div></div>
+        <div class="flow-stat-item"><div class="fsi-val">¥27.4</div><div class="fsi-label">平均客单价</div><div class="fsi-change">↑ 3.2%</div></div>
+        <div class="flow-stat-item"><div class="fsi-val">156</div><div class="fsi-label">总订单数</div><div class="fsi-change">↑ 12.3%</div></div>
+      </div>
+      <div class="chart-box"><div class="chart-header"><h3 style="font-size:15px;font-weight:700">💰 客单价趋势（近7日）</h3></div><canvas id="priceChart" height="200" style="width:100%"></canvas></div>
+      <div class="card">
+        <div class="card-title">🏆 热门产品 TOP5</div>
+        <div class="order-product"><div class="op-rank" style="background:linear-gradient(135deg,#fdcb6e,#e17055)">1</div><div class="op-name">樱花拿铁</div><div class="op-amount">52杯</div><div class="op-revenue">¥1,456</div></div>
+        <div class="order-product"><div class="op-rank" style="background:linear-gradient(135deg,#dfe6e9,#b2bec3)">2</div><div class="op-name">美式咖啡</div><div class="op-amount">38杯</div><div class="op-revenue">¥760</div></div>
+        <div class="order-product"><div class="op-rank" style="background:linear-gradient(135deg,#e17055,#d63031)">3</div><div class="op-name">拿铁</div><div class="op-amount">34杯</div><div class="op-revenue">¥952</div></div>
+        <div class="order-product"><div class="op-rank" style="background:#f0f1f5;color:#a4a4b8">4</div><div class="op-name">芝士蛋糕</div><div class="op-amount">28份</div><div class="op-revenue">¥588</div></div>
+        <div class="order-product"><div class="op-rank" style="background:#f0f1f5;color:#a4a4b8">5</div><div class="op-name">手冲咖啡</div><div class="op-amount">18杯</div><div class="op-revenue">¥576</div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">⏰ 高峰时段订单分布</div>
+        <div class="compare-bar"><span class="cb-label">8-10时</span><div class="cb-bar"><div class="cb-fill" style="width:55%;background:#f39c12"></div></div><span class="cb-val">70单</span></div>
+        <div class="compare-bar"><span class="cb-label">14-16时</span><div class="cb-bar"><div class="cb-fill" style="width:95%;background:#e17055"></div></div><span class="cb-val">86单</span></div>
+        <div class="compare-bar"><span class="cb-label">17-19时</span><div class="cb-bar"><div class="cb-fill" style="width:100%;background:#e17055"></div></div><span class="cb-val">102单</span></div>
+        <div class="compare-bar"><span class="cb-label">其他时段</span><div class="cb-bar"><div class="cb-fill" style="width:35%;background:#6c5ce7"></div></div><span class="cb-val">36单</span></div>
+      </div>
+      <div class="insight-card" onclick="openOrderInsight()">
+        <div class="ic-title">💡 消费洞察</div>
+        <div class="ic-desc">樱花拿铁占今日营收34%，新品带动效应明显。17-19时为订单高峰，建议增派人手。手冲咖啡客单价最高（¥32），可增加品类推荐。</div>
+      </div>
+    </div>
+
+    <!-- ===== 模块4：周报&AI ===== -->
+    <div class="module-panel" id="module-3">
+      <div class="weekly-section">
+        <div class="ws-title">📋 本周运营周报（4.28-5.4）</div>
+        <div class="weekly-item"><div class="wi-dot" style="background:#e17055"></div><div class="wi-text"><b>客流概况：</b>本周总客流1,060人，日均152人，较上周增长8.3%。周末客流最高（周六188人），工作日下午14-16时为固定高峰。</div></div>
+        <div class="weekly-item"><div class="wi-dot" style="background:#6c5ce7"></div><div class="wi-text"><b>内容效果：</b>发布内容12篇，总浏览10,049次，互动1,732次。小红书"樱花拿铁"笔记表现最佳，单篇到店转化273人。</div></div>
+        <div class="weekly-item"><div class="wi-dot" style="background:#00b894"></div><div class="wi-text"><b>订单分析：</b>总营收¥28,460，客单价¥26.8。热门TOP3：樱花拿铁（¥6,230）、拿铁（¥5,680）、美式（¥3,960）。17-19时订单占比35%。</div></div>
+        <div class="weekly-item"><div class="wi-dot" style="background:#f39c12"></div><div class="wi-text"><b>改进建议：</b>①下午时段客流偏低，建议推出下午茶套餐；②手冲咖啡内容不足，需增加专业向内容产出；③双人套餐分享率高，可加大社交传播力度。</div></div>
+      </div>
+      <div class="ai-gen-box" onclick="openAIGenerate()">
+        <div class="agb-title">🤖 AI一键生成推广素材</div>
+        <div class="agb-desc">基于本周运营数据，自动生成适配小红书、朋友圈、抖音的新媒体推广内容</div>
+      </div>
+      <div id="ai-content-area" style="display:none">
+        <div class="ai-content-preview">
+          <span class="acp-platform" style="background:#ffeaea;color:#e17055">小红书</span>
+          <div class="acp-title">🌸 春日限定樱花拿铁｜福州必打卡咖啡店</div>
+          <div class="acp-text">家人们谁懂啊！这杯樱花拿铁真的太绝了～拿铁上漂浮的樱花花瓣超梦幻，入口丝滑不腻，配上靠窗位置拍照绝美📸 福州大学附近的宝藏咖啡店，周末必来！人均¥30，性价比超高～ #福州探店 #樱花拿铁 #咖啡推荐</div>
+        </div>
+        <div class="ai-content-preview">
+          <span class="acp-platform" style="background:#e8f8f0;color:#00b894">朋友圈</span>
+          <div class="acp-title">☕ 这个周末，让咖啡治愈你</div>
+          <div class="acp-text">新品樱花拿铁限时尝鲜中🧡 周末双人套餐立减30，带上TA一起享受悠闲下午茶时光～ 到店即赠精美曲奇一份🍪 数量有限，先到先得！</div>
+        </div>
+        <div class="ai-content-preview">
+          <span class="acp-platform" style="background:#eef1ff;color:#0984e3">抖音</span>
+          <div class="acp-title">🔥 福州高颜值咖啡店｜一杯咖啡开启美好周末</div>
+          <div class="acp-text">拍摄建议：15秒短视频，镜头从店招推入，展示靠窗座位氛围，特写咖啡师拉花过程，最终定格顾客品尝樱花拿铁的满足表情。配乐选择轻快治愈风BGM。</div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:4px">
+        <div class="card-title">📅 历史周报</div>
+        <div class="row" style="cursor:pointer" onclick="alert('查看4.21-4.27周报')"><span class="label">4.21 - 4.27 周报</span><span class="badge badge-blue">营收 ¥26,120</span></div>
+        <div class="row" style="cursor:pointer" onclick="alert('查看4.14-4.20周报')"><span class="label">4.14 - 4.20 周报</span><span class="badge badge-blue">营收 ¥24,580</span></div>
+        <div class="row" style="cursor:pointer" onclick="alert('查看4.7-4.13周报')"><span class="label">4.07 - 4.13 周报</span><span class="badge badge-blue">营收 ¥22,340</span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ========== 详情弹窗 ========== -->
+
+<!-- KPI详情弹窗 -->
+<div class="overlay" id="overlay-kpi">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title" id="kpi-title">数据详情</div>
+    <div class="detail-stats" id="kpi-stats"></div>
+    <canvas id="kpiChart" height="180" style="width:100%;margin:12px 0"></canvas>
+    <div class="section-title">📊 渠道分解</div>
+    <div id="kpi-channels"></div>
+    <div style="text-align:center;padding:16px 0"><span style="color:#6c5ce7;font-weight:600;cursor:pointer" onclick="closeOverlay('overlay-kpi')">收起</span></div>
+  </div>
+</div>
+
+<!-- 内容详情弹窗（扩充版） -->
+<div class="overlay" id="overlay-content">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title" id="cd-title">内容详情</div>
+    <div class="detail-stats">
+      <div class="detail-stat"><div class="ds-val" id="cd-views">-</div><div class="ds-label">浏览量</div></div>
+      <div class="detail-stat"><div class="ds-val" id="cd-likes">-</div><div class="ds-label">点赞数</div></div>
+      <div class="detail-stat"><div class="ds-val" id="cd-shares">-</div><div class="ds-label">分享数</div></div>
+      <div class="detail-stat"><div class="ds-val" id="cd-rate">-</div><div class="ds-label">转化率</div></div>
+    </div>
+    <canvas id="detailTrendChart" height="150" style="width:100%;margin-bottom:12px"></canvas>
+    <!-- 受众画像 -->
+    <div class="section-title">👥 受众画像</div>
+    <div style="font-size:13px;font-weight:600;color:#636e72;margin-bottom:6px">性别分布</div>
+    <div class="tag-group" id="cd-gender"></div>
+    <div style="font-size:13px;font-weight:600;color:#636e72;margin:12px 0 6px">年龄分布</div>
+    <div id="cd-age-bars"></div>
+    <div style="font-size:13px;font-weight:600;color:#636e72;margin:12px 0 6px">兴趣标签</div>
+    <div class="tag-group" id="cd-tags"></div>
+    <!-- 来源分析 -->
+    <div class="section-title">🔗 流量来源</div>
+    <div id="cd-sources"></div>
+    <!-- 评论区 -->
+    <div class="section-title">💬 热门评论</div>
+    <div id="cd-comments"></div>
+    <div style="text-align:center;padding:16px 0"><span style="color:#6c5ce7;font-weight:600;cursor:pointer" onclick="closeOverlay('overlay-content')">收起</span></div>
+  </div>
+</div>
+
+<!-- 时段详情弹窗（扩充版） -->
+<div class="overlay" id="overlay-hour">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title" id="hd-title">时段详情</div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px">
+      <div class="sd-item"><div class="sdv" id="hd-total">-</div><div class="sdl">总客流</div></div>
+      <div class="sd-item"><div class="sdv" id="hd-rev">-</div><div class="sdl">营收</div></div>
+      <div class="sd-item"><div class="sdv" id="hd-avg">-</div><div class="sdl">客单价</div></div>
+      <div class="sd-item"><div class="sdv" id="hd-new">-</div><div class="sdl">新客占比</div></div>
+    </div>
+    <!-- 客流构成 -->
+    <div class="section-title">👥 客流构成</div>
+    <div id="hd-customer-types"></div>
+    <!-- 热销商品 -->
+    <div class="section-title">🔥 热销商品 TOP3</div>
+    <div id="hd-hot-items"></div>
+    <!-- 转化漏斗 -->
+    <div class="section-title">🔄 转化漏斗</div>
+    <div id="hd-funnel"></div>
+    <!-- 时段趋势 -->
+    <canvas id="hdChart" height="150" style="width:100%;margin-top:8px"></canvas>
+    <div style="text-align:center;padding:16px 0"><span style="color:#6c5ce7;font-weight:600;cursor:pointer" onclick="closeOverlay('overlay-hour')">收起</span></div>
+  </div>
+</div>
+
+<!-- 推广详情弹窗（扩充版） -->
+<div class="overlay" id="overlay-promo">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title" id="pd-title">推广详情</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;text-align:center">
+      <div class="sd-item"><div class="sdv" id="pd-ex">-</div><div class="sdl">曝光</div></div>
+      <div class="sd-item"><div class="sdv" id="pd-cl">-</div><div class="sdl">点击</div></div>
+      <div class="sd-item"><div class="sdv" id="pd-cv">-</div><div class="sdl">转化</div></div>
+      <div class="sd-item"><div class="sdv" id="pd-roi">-</div><div class="sdl">ROI</div></div>
+    </div>
+    <!-- 目标达成 -->
+    <div class="section-title">🎯 目标达成</div>
+    <div id="pd-goals"></div>
+    <!-- 渠道分析 -->
+    <div class="section-title">📱 渠道分解</div>
+    <div id="pd-channels"></div>
+    <!-- 转化漏斗 -->
+    <div class="section-title">🔄 转化漏斗</div>
+    <div id="pd-funnel"></div>
+    <!-- 趋势图 -->
+    <canvas id="pdChart" height="150" style="width:100%;margin-top:8px"></canvas>
+    <div style="text-align:center;padding:16px 0"><span style="color:#6c5ce7;font-weight:600;cursor:pointer" onclick="closeOverlay('overlay-promo')">收起</span></div>
+  </div>
+</div>
+
+<!-- 座位详情弹窗 -->
+<div class="overlay" id="overlay-seat">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title" id="sd-title">座位详情</div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px">
+      <div class="sd-item"><div class="sdv" id="sd-status">-</div><div class="sdl">状态</div></div>
+      <div class="sd-item"><div class="sdv" id="sd-time">-</div><div class="sdl">时长</div></div>
+      <div class="sd-item"><div class="sdv" id="sd-customer">-</div><div class="sdl">顾客</div></div>
+      <div class="sd-item"><div class="sdv" id="sd-amount">-</div><div class="sdl">消费</div></div>
+    </div>
+    <div id="sd-orders"></div>
+    <div style="text-align:center;padding:16px 0"><span style="color:#6c5ce7;font-weight:600;cursor:pointer" onclick="closeOverlay('overlay-seat')">收起</span></div>
+  </div>
+</div>
+
+<!-- 底部导航 -->
+<div class="tab-bar">
+  <div class="tab-item active" onclick="go('home')"><div class="icon">🏠</div><div class="text">首页</div></div>
+  <div class="tab-item" onclick="go('staff')"><div class="icon">📚</div><div class="text">论坛</div></div>
+  <div class="tab-item" onclick="go('seat')"><div class="icon">🪑</div><div class="text">座位</div></div>
+  <div class="tab-item" onclick="go('content')"><div class="icon">📊</div><div class="text">运营</div></div>
+</div>
+
+<script>
+/* ========== 页面切换 ========== */
+function go(name){
+  var pages=document.querySelectorAll('.page');
+  for(var i=0;i<pages.length;i++) pages[i].classList.remove('active');
+  var target=document.getElementById('page-'+name);
+  if(target) target.classList.add('active');
+  var tabs=document.querySelectorAll('.tab-item');
+  for(var j=0;j<tabs.length;j++) tabs[j].classList.remove('active');
+  var map={'home':0,'staff':1,'seat':2,'content':3};
+  if(map[name]!=null) tabs[map[name]].classList.add('active');
+  if(name==='content'){ setTimeout(function(){switchModule(0);},100); }
+  if(name==='home'){ setTimeout(drawHomeFlowChart,100); }
+  if(name==='seat') renderSeats();
+  window.scrollTo(0,0);
+}
+
+/* ========== 员工论坛Tab ========== */
+function switchStaffTab(idx){
+  var btns=document.querySelectorAll('#staff-tabs .tab-btn');
+  for(var i=0;i<btns.length;i++) btns[i].classList.toggle('active',i===idx);
+  for(var j=0;j<4;j++){
+    var p=document.getElementById('staff-panel-'+j);
+    if(p) p.style.display=j===idx?'block':'none';
+  }
+}
+/* ========== 座位管理 ========== */
+var SEATS={
+  'A01':{s:'empty'},'A02':{s:'taken',c:'张女士',d:'45分钟',o:['拿铁x1','樱花拿铁x1'],t:66},'A03':{s:'empty'},
+  'A04':{s:'booked',c:'李先生',d:'预订18:00'},'A05':{s:'empty'},
+  'A06':{s:'taken',c:'王同学',d:'20分钟',o:['美式x2'],t:70},'A07':{s:'empty'},'A08':{s:'empty'},
+  'A09':{s:'taken',c:'陈女士',d:'60分钟',o:['摩卡x1','蛋糕x1'],t:58},'A10':{s:'booked',c:'赵先生',d:'预订19:30'},
+  'B01':{s:'taken',c:'刘先生',d:'30分钟',o:['拿铁x1'],t:30},'B02':{s:'taken',c:'周女士',d:'50分钟',o:['卡布奇诺x1'],t:62},
+  'B03':{s:'empty'},'B04':{s:'booked',c:'吴小姐',d:'预订17:00'},
+  'B05':{s:'taken',c:'郑同学',d:'15分钟',o:['美式x1'],t:35},'B06':{s:'empty'},'B07':{s:'empty'},
+  'B08':{s:'taken',c:'孙先生',d:'40分钟',o:['拿铁x2'],t:60},
+  'C01':{s:'booked',c:'黄女士',d:'预订12:00'},'C02':{s:'taken',c:'林先生',d:'90分钟',o:['手冲x1','蛋糕x2'],t:128},
+  'C03':{s:'empty'},'C04':{s:'empty'}
+};
+var SCLASS={'empty':'seat-empty','taken':'seat-taken','booked':'seat-booked'};
+var SLABEL={'empty':'空座','taken':'已占','booked':'预订'};
+
+function renderSeats(){
+  var zones=['a','b','c'];
+  for(var z=0;z<zones.length;z++){
+    var zone=zones[z];
+    var grid=document.getElementById('grid-'+zone);
+    if(!grid) continue;
+    var html='';
+    var keys=Object.keys(SEATS);
+    for(var k=0;k<keys.length;k++){
+      var key=keys[k];
+      if(key[0].toLowerCase()!==zone) continue;
+      var d=SEATS[key];
+      var cls=SCLASS[d.s]||'seat-empty';
+      var lbl=SLABEL[d.s]||'空座';
+      html+='<div class="seat '+cls+'" onclick="openSeatDetail(\''+key+'\')"><div class="sid">'+key+'</div><div>'+lbl+'</div></div>';
+    }
+    grid.innerHTML=html;
+  }
+}
+
+function openSeatDetail(id){
+  var d=SEATS[id];
+  if(!d) d={s:'empty'};
+  var el;
+  el=document.getElementById('sd-title'); if(el) el.textContent=id+' 座位详情';
+  el=document.getElementById('sd-status'); if(el) el.textContent=SLABEL[d.s]||'空座';
+  el=document.getElementById('sd-time'); if(el) el.textContent=d.d||'-';
+  el=document.getElementById('sd-customer'); if(el) el.textContent=d.c||'-';
+  el=document.getElementById('sd-amount'); if(el) el.textContent='¥'+(d.t||0);
+  var oh='';
+  if(d.o && d.o.length>0){
+    oh='<div style="margin-top:8px">';
+    for(var i=0;i<d.o.length;i++) oh+='<span class="order-tag">'+d.o[i]+'</span>';
+    oh+='</div>';
+  }
+  el=document.getElementById('sd-orders'); if(el) el.innerHTML=oh||'<div style="color:#a4a4b8;font-size:13px;padding:8px 0">暂无点单</div>';
+  el=document.getElementById('overlay-seat'); if(el) el.classList.add('show');
+}
+
+/* ========== 内容运营：模块Tab切换 ========== */
+function switchModule(idx){
+  var btns=document.querySelectorAll('#module-tabs .module-tab-btn');
+  for(var i=0;i<btns.length;i++) btns[i].classList.toggle('active',i===idx);
+  for(var j=0;j<4;j++){
+    var p=document.getElementById('module-'+j);
+    if(p) p.classList.toggle('active',j===idx);
+  }
+  if(idx===0) setTimeout(drawFlowChart,120);
+  if(idx===1) setTimeout(drawContentFlowChart,120);
+        if(idx===1){ setTimeout(function(){drawContentFlowChart();drawContentHeatmap();drawFunnel();drawPlatformDonut();renderEnhancedRank();renderChannelCompare();},120); }
+  if(idx===2) setTimeout(drawPriceChart,120);
+}
+
+/* ========== 图表1：今日时段客流 ========== */
+function drawFlowChart(){
+  var c=document.getElementById('flowChart');
+  if(!c) return;
+  var ctx=c.getContext('2d');
+  c.width=c.offsetWidth*2; c.height=200*2; ctx.scale(2,2);
+  ctx.clearRect(0,0,c.width,c.height);
+  var w=c.offsetWidth, h=200;
+  var padL=40, padR=10, padT=20, padB=30;
+  var cw=w-padL-padR, ch=h-padT-padB;
+  var hours=['8h','9h','10h','11h','12h','13h','14h','15h','16h','17h','18h','19h'];
+  var vals=[42,28,15,8,6,35,48,38,26,50,52,36];
+  var mx=60;
+  ctx.strokeStyle='#f0f1f5'; ctx.lineWidth=1;
+  for(var i=0;i<4;i++){ctx.beginPath();ctx.moveTo(padL,padT+ch*i/3);ctx.lineTo(w-padR,padT+ch*i/3);ctx.stroke();}
+  ctx.beginPath();
+  for(var i=0;i<vals.length;i++){var x=padL+cw*i/(vals.length-1);var y=padT+ch-(vals[i]/mx)*ch;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);}
+  ctx.lineTo(padL+cw,padT+ch); ctx.lineTo(padL,padT+ch); ctx.closePath();
+  var grad=ctx.createLinearGradient(0,padT,0,padT+ch);
+  grad.addColorStop(0,'rgba(225,112,85,0.25)'); grad.addColorStop(1,'rgba(225,112,85,0)');
+  ctx.fillStyle=grad; ctx.fill();
+  ctx.beginPath(); ctx.strokeStyle='#e17055'; ctx.lineWidth=2.5;
+  for(var i=0;i<vals.length;i++){var x=padL+cw*i/(vals.length-1);var y=padT+ch-(vals[i]/mx)*ch;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);}
+  ctx.stroke();
+  for(var i=0;i<vals.length;i++){
+    var x=padL+cw*i/(vals.length-1);var y=padT+ch-(vals[i]/mx)*ch;
+    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(x,y,5,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#e17055'; ctx.beginPath(); ctx.arc(x,y,3,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#999'; ctx.font='10px sans-serif'; ctx.textAlign='center';
+    ctx.fillText(vals[i],x,y-12);
+    ctx.fillText(hours[i],x,h-8);
+  }
+}
+
+/* ========== 图表2：内容发布→到店客流 ========== */
+function drawContentFlowChart(){
+  var c=document.getElementById('contentFlowChart');
+  if(!c) return;
+  var ctx=c.getContext('2d');
+  c.width=c.offsetWidth*2; c.height=200*2; ctx.scale(2,2);
+  ctx.clearRect(0,0,c.width,c.height);
+  var w=c.offsetWidth, h=200;
+  var padL=45, padR=10, padT=20, padB=30;
+  var cw=w-padL-padR, ch=h-padT-padB;
+  var days=['4/27','4/28','4/29','4/30','5/1','5/2','今日'];
+  var visitors=[120,180,150,210,280,240,320];
+  var mx=400;
+  ctx.strokeStyle='#f0f1f5'; ctx.lineWidth=1;
+  for(var i=0;i<4;i++){ctx.beginPath();ctx.moveTo(padL,padT+ch*i/3);ctx.lineTo(w-padR,padT+ch*i/3);ctx.stroke();}
+  ctx.beginPath(); ctx.strokeStyle='#e17055'; ctx.lineWidth=2.5;
+  for(var i=0;i<visitors.length;i++){var x=padL+cw*i/(visitors.length-1);var y=padT+ch-(visitors[i]/mx)*ch;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);}
+  ctx.stroke();
+  var barW=cw/(visitors.length+1)*0.5;
+  ctx.fillStyle='rgba(108,92,231,0.5)';
+  for(var i=0;i<visitors.length;i++){
+    var x=padL+cw*i/(visitors.length-1)-barW/2;
+    var barH=((i+1)*10/(12))*ch*0.6;
+    ctx.fillRect(x,padT+ch-barH,barW,barH);
+  }
+  for(var i=0;i<visitors.length;i++){
+    var x=padL+cw*i/(visitors.length-1);var y=padT+ch-(visitors[i]/mx)*ch;
+    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(x,y,5,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#e17055'; ctx.beginPath(); ctx.arc(x,y,3,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#999'; ctx.font='10px sans-serif'; ctx.textAlign='center';
+    ctx.fillText(visitors[i]+'人',x,y-12);
+    ctx.fillText(days[i],x,h-8);
+  }
+  ctx.fillStyle='#e17055'; ctx.fillRect(padL,padT-10,12,3);
+  ctx.fillStyle='#636e72'; ctx.font='10px sans-serif'; ctx.textAlign='left';
+  ctx.fillText('到店客流',padL+16,padT-7);
+  ctx.fillStyle='rgba(108,92,231,0.5)'; ctx.fillRect(padL+80,padT-13,12,10);
+  ctx.fillStyle='#636e72'; ctx.fillText('发布篇数',padL+96,padT-7);
+}
+
+/* ========== 图表3：客单价趋势 ========== */
+function drawPriceChart(){
+  var c=document.getElementById('priceChart');
+  if(!c) return;
+  var ctx=c.getContext('2d');
+  c.width=c.offsetWidth*2; c.height=200*2; ctx.scale(2,2);
+  ctx.clearRect(0,0,c.width,c.height);
+  var w=c.offsetWidth, h=200;
+  var padL=45, padR=10, padT=20, padB=30;
+  var cw=w-padL-padR, ch=h-padT-padB;
+  var days=['4/27','4/28','4/29','4/30','5/1','5/2','今日'];
+  var vals=[25.8,26.2,24.9,27.1,28.3,27.8,27.4];
+  var mx=32, mn=23;
+  ctx.strokeStyle='#f0f1f5'; ctx.lineWidth=1;
+  for(var i=0;i<4;i++){ctx.beginPath();ctx.moveTo(padL,padT+ch*i/3);ctx.lineTo(w-padR,padT+ch*i/3);ctx.stroke();}
+  ctx.beginPath();
+  for(var i=0;i<vals.length;i++){var x=padL+cw*i/(vals.length-1);var y=padT+ch-((vals[i]-mn)/(mx-mn))*ch;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);}
+  ctx.lineTo(padL+cw,padT+ch); ctx.lineTo(padL,padT+ch); ctx.closePath();
+  var grad=ctx.createLinearGradient(0,padT,0,padT+ch);
+  grad.addColorStop(0,'rgba(225,112,85,0.2)'); grad.addColorStop(1,'rgba(225,112,85,0)');
+  ctx.fillStyle=grad; ctx.fill();
+  ctx.beginPath(); ctx.strokeStyle='#e17055'; ctx.lineWidth=2.5;
+  for(var i=0;i<vals.length;i++){var x=padL+cw*i/(vals.length-1);var y=padT+ch-((vals[i]-mn)/(mx-mn))*ch;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);}
+  ctx.stroke();
+  for(var i=0;i<vals.length;i++){
+    var x=padL+cw*i/(vals.length-1);var y=padT+ch-((vals[i]-mn)/(mx-mn))*ch;
+    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(x,y,5,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#e17055'; ctx.beginPath(); ctx.arc(x,y,3,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#999'; ctx.font='10px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('¥'+vals[i],x,y-12);
+    ctx.fillText(days[i],x,h-8);
+  }
+}
+
+/* ========== 首页：今日客流趋势 ========== */
+function drawHomeFlowChart(){
+  var c=document.getElementById('homeFlowChart');
+  if(!c) return;
+  var ctx=c.getContext('2d');
+  c.width=c.offsetWidth*2; c.height=160*2; ctx.scale(2,2);
+  ctx.clearRect(0,0,c.width,c.height);
+  var w=c.offsetWidth, h=160;
+  var padL=35, padR=10, padT=15, padB=25;
+  var cw=w-padL-padR, ch=h-padT-padB;
+  var hours=['8时','10时','12时','14时','16时','18时','20时'];
+  var vals=[12,28,45,48,38,52,30];
+  var mx=60, mn=0;
+  ctx.strokeStyle='#f0f1f5'; ctx.lineWidth=1;
+  for(var i=0;i<4;i++){ctx.beginPath();ctx.moveTo(padL,padT+ch*i/3);ctx.lineTo(w-padR,padT+ch*i/3);ctx.stroke();}
+  ctx.fillStyle='#bbb'; ctx.font='9px sans-serif'; ctx.textAlign='right';
+  for(var i=0;i<4;i++){ctx.fillText(mx-i*(mx-mn)/3,padL-4,padT+ch*i/3+3);}
+  var barW=cw/vals.length*0.6;
+  var barGap=cw/vals.length;
+  for(var i=0;i<vals.length;i++){
+    var x=padL+barGap*i+barGap/2-barW/2;
+    var barH=((vals[i]-mn)/(mx-mn))*ch;
+    var gradient=ctx.createLinearGradient(0,padT+ch-barH,0,padT+ch);
+    gradient.addColorStop(0,'#e17055'); gradient.addColorStop(1,'#fdcb6e');
+    ctx.fillStyle=gradient;
+    roundRect(ctx,x,padT+ch-barH,barW,barH,4);
+    ctx.fill();
+    ctx.fillStyle='#e17055'; ctx.font='bold 9px sans-serif'; ctx.textAlign='center';
+    ctx.fillText(vals[i],x+barW/2,padT+ch-barH-4);
+    ctx.fillStyle='#999'; ctx.font='9px sans-serif';
+    ctx.fillText(hours[i],x+barW/2,h-8);
+  }
+}
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h);ctx.lineTo(x,y+h);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();
+}
+/* ========== 洞察弹窗 ========== */
+function openFlowInsight(){
+  alert('📊 客流洞察\n\n今日14-16时为客流高峰（48人），建议提前备货。\nA区靠窗座位全天满座率95%，可考虑增设座位或设置预约优先。\n17-19时订单高峰，建议增派1名店员。');
+}
+function openContentInsight(){
+  alert('📱 AI内容分析\n\n小红书"樱花拿铁"笔记转化率8.5%，远超均值5.2%。\n建议：增加同类产品种草内容，每周3篇以上，重点投放18-30岁女性用户。\n双人套餐内容分享率是其他内容2.1倍，建议加大社交传播力度。');
+}
+function openOrderInsight(){
+  alert('💰 消费洞察\n\n樱花拿铁占今日营收34%，新品带动效应明显。\n17-19时为订单高峰（102单），建议增派人手。\n手冲咖啡客单价最高（¥32），可增加品类推荐和关联销售。');
+}
+
+/* ========== AI生成推广素材 ========== */
+function openAIGenerate(){
+  var area=document.getElementById('ai-content-area');
+  if(area) area.style.display='block';
+  setTimeout(function(){ if(area) area.scrollIntoView({behavior:'smooth'}); },100);
+}
+
+/* ========== 内容详情弹窗（保留） ========== */
+var CONTDATA={
+  sakura:{
+    name:'春日限定樱花拿铁',v:3214,lk:486,cm:52,sh:127,rate:'8.5%',
+    trend:[280,350,420,380,460,510,814],
+    gender:{male:32,female:68},
+    age:[{l:'18-24',v:45},{l:'25-30',v:32},{l:'31-40',v:16},{l:'41+',v:7}],
+    tags:['咖啡爱好者','樱花季','拍照打卡','下午茶'],
+    sources:[{name:'小红书',v:1420,p:44},{name:'微信朋友圈',v:980,p:30},{name:'抖音',v:614,p:19},{name:'公众号',v:200,p:7}],
+    comments:[
+      {name:'小樱花',text:'樱花拿铁真的好好喝！已经安利给闺蜜了🌸',time:'2小时前',star:5},
+      {name:'咖啡控老王',text:'味道不错，但个人觉得有点偏甜，下次试试少糖',time:'3小时前',star:4},
+      {name:'宅家小姐姐',text:'打卡必点！拍出来超好看，颜值在线',time:'5小时前',star:5}
+    ]
+  },
+  birthday:{
+    name:'会员专属｜生日咖啡免费领',v:2876,lk:612,cm:89,sh:203,rate:'12.3%',
+    trend:[320,380,410,440,390,420,516],
+    gender:{male:28,female:72},
+    age:[{l:'18-24',v:38},{l:'25-30',v:40},{l:'31-40',v:18},{l:'41+',v:4}],
+    tags:['会员福利','生日特权','情感营销','高转化'],
+    sources:[{name:'微信朋友圈',v:1300,p:45},{name:'公众号',v:870,p:30},{name:'短信推送',v:520,p:18},{name:'小红书',v:186,p:7}],
+    comments:[
+      {name:'寿星小陈',text:'太暖心了！生日当天收到免费咖啡券，感动😭',time:'1小时前',star:5},
+      {name:'咖啡会员',text:'这个活动办得好，已经连续三年收到生日福利了',time:'4小时前',star:5}
+    ]
+  },
+  combo:{
+    name:'周末优惠｜双人套餐立减30',v:2103,lk:289,cm:34,sh:98,rate:'6.2%',
+    trend:[250,280,310,290,340,320,313],
+    gender:{male:40,female:60},
+    age:[{l:'18-24',v:25},{l:'25-30',v:48},{l:'31-40',v:22},{l:'41+',v:5}],
+    tags:['周末特惠','双人套餐','高性价比','社交属性'],
+    sources:[{name:'微信朋友圈',v:890,p:42},{name:'抖音',v:720,p:34},{name:'小红书',v:350,p:17},{name:'其他',v:143,p:7}],
+    comments:[
+      {name:'周末党',text:'和闺蜜两个人去喝，减30很划算！',time:'2小时前',star:5},
+      {name:'上班族小李',text:'希望平时也有优惠啊，只有周末有点可惜',time:'6小时前',star:3}
+    ]
+  },
+  pour:{
+    name:'精品推荐｜庄园手冲咖啡',v:1856,lk:345,cm:28,sh:76,rate:'5.1%',
+    trend:[180,200,230,220,260,270,296],
+    gender:{male:55,female:45},
+    age:[{l:'25-30',v:30},{l:'31-40',v:42},{l:'41+',v:20},{l:'18-24',v:8}],
+    tags:['精品咖啡','手冲','庄园直供','专业之选'],
+    sources:[{name:'公众号',v:780,p:42},{name:'微信朋友圈',v:560,p:30},{name:'小红书',v:356,p:19},{name:'抖音',v:160,p:9}],
+    comments:[
+      {name:'咖啡老饕',text:'这支豆子风味很干净，果酸明亮，推荐！',time:'3小时前',star:5},
+      {name:'手冲爱好者',text:'希望能多出几款单一产地手冲，选择多一点',time:'5小时前',star:4}
+    ]
+  }
+};
+
+function openContentDetail(key){
+  var d=CONTDATA[key]||CONTDATA.sakura;
+  var el;
+  el=document.getElementById('cd-title'); if(el) el.textContent=d.name;
+  el=document.getElementById('cd-views'); if(el) el.textContent=d.v.toLocaleString();
+  el=document.getElementById('cd-likes'); if(el) el.textContent=d.lk;
+  el=document.getElementById('cd-shares'); if(el) el.textContent=d.sh;
+  el=document.getElementById('cd-rate'); if(el) el.textContent=d.rate;
+  var gg=document.getElementById('cd-gender');
+  if(gg) gg.innerHTML='<span class="tag">♂ '+d.gender.male+'%</span><span class="tag">♀ '+d.gender.female+'%</span>';
+  var ab=document.getElementById('cd-age-bars');
+  if(ab){
+    var ahtm='';
+    d.age.forEach(function(a){
+      ahtm+='<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span>'+a.l+'</span><span style="font-weight:600;color:#6c5ce7">'+a.v+'%</span></div><div class="mini-bar"><div class="mini-bar-fill" style="width:'+a.v+'%;background:linear-gradient(90deg,#6c5ce7,#a29bfe)"></div></div></div>';
+    });
+    ab.innerHTML=ahtm;
+  }
+  var tg=document.getElementById('cd-tags');
+  if(tg){ var thtm=''; d.tags.forEach(function(t){thtm+='<span class="tag tag-purple">'+t+'</span>';}); tg.innerHTML=thtm; }
+  var cs=document.getElementById('cd-sources');
+  if(cs){
+    var shtm='';
+    d.sources.forEach(function(s){
+      shtm+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><span style="font-size:13px;color:#636e72;min-width:70px">'+s.name+'</span><div class="mini-bar" style="flex:1"><div class="mini-bar-fill" style="width:'+s.p+'%;background:#6c5ce7"></div></div><span style="font-size:13px;font-weight:600;min-width:48px;text-align:right">'+s.v+'</span></div>';
+    });
+    cs.innerHTML=shtm;
+  }
+  var cm=document.getElementById('cd-comments');
+  if(cm){
+    var chtm='';
+    d.comments.forEach(function(c){
+      var stars=''; for(var i=0;i<c.star;i++) stars+='★'; for(var i=c.star;i<5;i++) stars+='☆';
+      chtm+='<div class="comment-item"><div class="comment-name">'+c.name+' <span class="star">'+stars+'</span></div><div class="comment-text">'+c.text+'</div><div class="comment-meta">'+c.time+'</div></div>';
+    });
+    cm.innerHTML=chtm;
+  }
+  var overlay=document.getElementById('overlay-content');
+  if(overlay){ overlay.classList.add('show'); }
+  setTimeout(function(){drawDetailTrend(d.trend)},200);
+}
+
+function drawDetailTrend(vals){
+  var c=document.getElementById('detailTrendChart');
+  if(!c) return;
+  var ctx=c.getContext('2d');
+  c.width=c.offsetWidth*2; c.height=150*2; ctx.scale(2,2);
+  ctx.clearRect(0,0,c.width,c.height);
+  var w=c.offsetWidth, h=150;
+  var mx=Math.max.apply(null,vals)*1.2||10;
+  var padL=35, padR=10, padT=15, padB=25;
+  var cw=w-padL-padR, ch=h-padT-padB;
+  var days=['4/27','4/28','4/29','4/30','5/1','5/2','今日'];
+  ctx.beginPath(); ctx.strokeStyle='#6c5ce7'; ctx.lineWidth=2.5;
+  for(var i=0;i<vals.length;i++){var x=padL+cw*i/(vals.length-1);var y=padT+ch-(vals[i]/mx)*ch;if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);}
+  ctx.stroke();
+  for(var i=0;i<vals.length;i++){
+    var x=padL+cw*i/(vals.length-1);var y=padT+ch-(vals[i]/mx)*ch;
+    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(x,y,4,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#6c5ce7'; ctx.beginPath(); ctx.arc(x,y,2.5,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#6c5ce7'; ctx.font='9px sans-serif'; ctx.textAlign='center';
+    ctx.fillText(vals[i],x,y-10);
+    ctx.fillStyle='#a4a4b8'; ctx.fillText(days[i],x,h-6);
+  }
+}
+
+/* ========== 关闭弹窗 ========== */
+function closeOverlay(id){
+  var el=document.getElementById(id);
+  if(el) el.classList.remove('show');
+}
+var overlays=document.querySelectorAll('.overlay');
+for(var o=0;o<overlays.length;o++){
+  (function(el){
+    el.addEventListener('click',function(e){if(e.target===el) el.classList.remove('show');});
+  })(overlays[o]);
+}
+
+/* ========== 初始化 ========== */
+renderSeats();
+
+/* ========== 内容效果：绘制增强版排行榜 ========== */
+var ENHANCED_RANK_DATA = [
+  {name:'春日限定樱花拿铁',platform:'小红书',color:'#e17055',views:3214,interacts:486,convert:273,rate:8.5,
+   spark:[80,120,200,180,260,350,420,380,460,510,600,814]},
+  {name:'会员生日咖啡免费领',platform:'朋友圈',color:'#00b894',views:2876,interacts:612,convert:354,rate:12.3,
+   spark:[150,180,220,250,300,340,390,410,440,500,520,580]},
+  {name:'周末双人套餐立减30',platform:'抖音',color:'#0984e3',views:2103,interacts:289,convert:130,rate:6.2,
+   spark:[60,90,130,120,170,200,230,210,250,280,300,340]},
+  {name:'庄园手冲咖啡',platform:'公众号',color:'#6c5ce7',views:1856,interacts:345,convert:95,rate:5.1,
+   spark:[40,60,80,100,120,140,170,190,210,230,260,280]}
+];
+var ENHANCED_RANK_KEYS = ['sakura','birthday','combo','pour'];
+
+function renderEnhancedRank(){
+  var container = document.getElementById('content-rank-enhanced');
+  if(!container) return;
+  var keys = ['sakura','birthday','combo','pour'];
+  var badgeColors = ['#fdcb6e','#b2bec3','#e17055','#dfe6e9'];
+  var html2 = '';
+  ENHANCED_RANK_DATA.forEach(function(d,i){
+    var ranks = ['1','2','3','4'];
+    var badgeStyle = 'background:linear-gradient(135deg,'+badgeColors[i]+','+(i<2?'#fdcb6e':'#b2bec3')+')';
+    var platformBg = i===0?'#ffeaea':i===1?'#e8f8f0':i===2?'#eef1ff':'#f0e6ff';
+    var platformColor = i===0?'#e17055':i===1?'#00b894':i===2?'#0984e3':'#6c5ce7';
+    var maxV = Math.max.apply(null,d.spark);
+    var bars = '';
+    d.spark.forEach(function(v,j){
+      var h = Math.round((v/maxV)*20);
+      var isLast = j===d.spark.length-1;
+      bars += '<div class="bar'+(isLast?' active':'')+'" style="height:'+h+'px;background:'+(isLast?'linear-gradient(0deg,#e17055,#fdcb6e)':'#dfe6e9')+'"></div>';
+    });
+    html2 += '<div class="rank-card rank-'+(i+1)+'" onclick="openContentDetail(\''+keys[i]+'\')">'+
+      '<div class="rank-card-top">'+
+        '<div class="rank-card-badge" style="'+badgeStyle+'">'+ranks[i]+'</div>'+
+        '<div class="rank-card-name">'+d.name+'</div>'+
+        '<span class="rank-card-platform" style="background:'+platformBg+';color:'+platformColor+'">'+d.platform+'</span>'+
+      '</div>'+
+      '<div class="rank-card-metrics">'+
+        '<div class="rcm-item"><div class="rcm-val">'+d.views.toLocaleString()+'</div><div class="rcm-label">浏览</div></div>'+
+        '<div class="rcm-item"><div class="rcm-val">'+d.interacts+'</div><div class="rcm-label">互动</div></div>'+
+        '<div class="rcm-item"><div class="rcm-val" style="color:#00b894">'+d.convert+'</div><div class="rcm-label">到店</div></div>'+
+        '<div class="rcm-item"><div class="rcm-val" style="color:#e17055">'+d.rate+'%</div><div class="rcm-label">转化</div></div>'+
+      '</div>'+
+      '<div class="rank-card-sparkline">'+bars+'</div>'+
+    '</div>';
+  });
+  container.innerHTML = html2;
+}
+
+function renderChannelCompare(){
+  var container = document.getElementById('channel-compare-enhanced');
+  if(!container) return;
+  var html = '';
+  CHANNEL_DATA.forEach(function(c){
+    var trendColor = c.trend >= 0 ? '#00b894' : '#e17055';
+    var trendSign = c.trend >= 0 ? '↑' : '↓';
+    html += '<div class="channel-compare-item">'+
+      '<div class="cci-icon" style="background:'+c.bg+'">'+c.icon+'</div>'+
+      '<div class="cci-info">'+
+        '<div class="cci-name">'+c.name+'</div>'+
+        '<div class="cci-detail">人均停留 '+c.avgStay+' · 互动率 '+((c.interacts/c.views*100).toFixed(1))+'%</div>'+
+      '</div>'+
+      '<div class="cci-metrics">'+
+        '<div class="cci-metric"><div class="cci-metric-val" style="color:'+c.color+'">'+c.views.toLocaleString()+'</div><div class="cci-metric-label">浏览</div></div>'+
+        '<div class="cci-metric"><div class="cci-metric-val" style="color:#636e72">'+c.convert+'</div><div class="cci-metric-label">到店</div></div>'+
+      '</div>'+
+      '<div class="cci-trend" style="color:'+trendColor+'">'+trendSign+' '+Math.abs(c.trend)+'%</div>'+
+    '</div>';
+  });
+  container.innerHTML = html;
+}
+
+/* ========== 内容效果：转化漏斗图 ========== */
+function drawFunnel(){
+  var container = document.getElementById('funnel-chart');
+  if(!container) return;
+  var steps = [
+    {label:'内容曝光',val:10249,color:'#6c5ce7',pct:100},
+    {label:'点击浏览',val:6830,color:'#a29bfe',pct:66.6},
+    {label:'互动行为',val:1732,color:'#e17055',pct:16.9},
+    {label:'点击导航',val:580,color:'#f39c12',pct:5.7},
+    {label:'到店消费',val:268,color:'#00b894',pct:2.6}
+  ];
+  var maxW = 100; // %
+  var html = '';
+  steps.forEach(function(s,i){
+    var w = (s.pct/100)*maxW;
+    var left = (maxW - w)/2;
+    html += '<div class="funnel-step">'+
+      '<div class="funnel-label">'+s.label+'</div>'+
+      '<div class="funnel-bar" style="width:'+w+'%;margin:0 '+left+'%;background:linear-gradient(90deg,'+s.color+','+s.color+'cc)">'+s.val.toLocaleString()+'</div>'+
+      '<div class="funnel-rate">'+(i===0?'':s.pct.toFixed(1)+'%')+'</div>'+
+      '<div class="funnel-value">'+(i===0?'':(i>0?((s.pct/steps[i-1].pct)*100).toFixed(1)+'%':'')+'')+'</div>'+
+    '</div>';
+  });
+  container.innerHTML = html;
+}
+
+/* ========== 内容效果：平台分布环形图 ========== */
+function drawPlatformDonut(){
+  var c = document.getElementById('platformDonut');
+  if(!c) return;
+  var ctx = c.getContext('2d');
+  c.width = c.offsetWidth * 2;
+  c.height = 200 * 2;
+  ctx.scale(2,2);
+  ctx.clearRect(0,0,c.width,c.height);
+  var w = c.offsetWidth, h = 200;
+  var cx = w * 0.35, cy = h/2, R = 70, r = 40;
+  var data = [
+    {label:'小红书',val:3890,color:'#e17055'},
+    {label:'朋友圈',val:4230,color:'#00b894'},
+    {label:'抖音',val:2160,color:'#0984e3'},
+    {label:'公众号',val:1120,color:'#6c5ce7'}
+  ];
+  var total = data.reduce(function(s,d){return s+d.val},0);
+  var startAngle = -Math.PI/2;
+  data.forEach(function(d){
+    var sliceAngle = (d.val/total) * Math.PI * 2;
+    ctx.beginPath();
+    ctx.moveTo(cx,cy);
+    ctx.arc(cx,cy,R,startAngle,startAngle+sliceAngle);
+    ctx.arc(cx,cy,r,startAngle+sliceAngle,startAngle,true);
+    ctx.closePath();
+    ctx.fillStyle = d.color;
+    ctx.fill();
+    startAngle += sliceAngle;
+  });
+  // 中间白色圆（制造环形效果）
+  ctx.beginPath();
+  ctx.arc(cx,cy,r-2,0,Math.PI*2);
+  ctx.fillStyle='#fff';
+  ctx.fill();
+  // 中心文字
+  ctx.fillStyle = '#2d3436';
+  ctx.font = 'bold 18px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(total.toLocaleString(), cx, cy+2);
+  ctx.fillStyle = '#a4a4b8';
+  ctx.font = '11px sans-serif';
+  ctx.fillText('总浏览', cx, cy+16);
+
+  // 图例
+  var legend = document.getElementById('donut-legend');
+  if(legend){
+    var lhtml = '';
+    data.forEach(function(d){
+      lhtml += '<span style="display:inline-flex;align-items:center;gap:4px"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:'+d.color+'"></span>'+d.label+' '+((d.val/total)*100).toFixed(0)+'%</span>';
+    });
+    legend.innerHTML = lhtml;
+  }
+}
+
+/* ========== 内容效果：热力图（7天×时段） ========== */
+function drawContentHeatmap(){
+  var c = document.getElementById('contentHeatmap');
+  if(!c) return;
+  var ctx = c.getContext('2d');
+  c.width = c.offsetWidth * 2;
+  c.height = 200 * 2;
+  ctx.scale(2,2);
+  ctx.clearRect(0,0,c.width,c.height);
+  var w = c.offsetWidth, h = 200;
+  var padL = 50, padR = 10, padT = 15, padB = 25;
+  var chartW = w - padL - padR, chartH = h - padT - padB;
+  // 数据：7天 × 4个时段（早/午/下午/晚）
+  var days = ['周一','周二','周三','周四','周五','周六','周日'];
+  var periods = ['8-12时','12-14时','14-17时','17-21时'];
+  var heatData = [
+    [12,45,78,34],[18,52,92,41],[15,38,65,28],[22,58,88,45],
+    [30,62,120,68],[48,85,156,95],[35,72,134,72]
+  ];
+  var maxV = 0;
+  for(var i=0;i<heatData.length;i++) for(var j=0;j<heatData[i].length;j++) if(heatData[i][j]>maxV) maxV=heatData[i][j];
+  var cellW = chartW / periods.length;
+  var cellH = chartH / days.length;
+  // 绘制单元格
+  for(var r=0;r<days.length;r++){
+    // Y轴标签
+    ctx.fillStyle = '#a4a4b8';
+    ctx.font = '10px sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(days[r], padL-6, padT + r*cellH + cellH/2 + 3);
+    for(var c2=0;c2<periods.length;c2++){
+      var val = heatData[r][c2];
+      var intensity = val / maxV;
+      // 颜色：从浅蓝到深紫到橙红
+      var r2 = Math.round(223 + intensity * (225-223));
+      var g2 = Math.round(230 + intensity * (112-230));
+      var b2 = Math.round(233 + intensity * (85-233));
+      var color = 'rgb('+r2+','+g2+','+b2+')';
+      var x = padL + c2 * cellW;
+      var y = padT + r * cellH;
+      ctx.fillStyle = color;
+      ctx.fillRect(x+1, y+1, cellW-2, cellH-2);
+      // 数值
+      if(cellW > 50){
+        ctx.fillStyle = intensity > 0.5 ? '#fff' : '#636e72';
+        ctx.font = 'bold 9px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(val, x + cellW/2, y + cellH/2 + 3);
+      }
+    }
+  }
+  // X轴标签
+  ctx.fillStyle = '#a4a4b8';
+  ctx.font = '10px sans-serif';
+  ctx.textAlign = 'center';
+  for(var c3=0;c3<periods.length;c3++){
+    ctx.fillText(periods[c3], padL + c3*cellW + cellW/2, h - 8);
+  }
+}
+
+/* ========== 内容效果：更新后的内容浏览→到店转化图表 ========== */
+function drawContentFlowChart(){
+  var c = document.getElementById('contentFlowChart');
+  if(!c) return;
+  var ctx = c.getContext('2d');
+  c.width = c.offsetWidth * 2;
+  c.height = 220 * 2;
+  ctx.scale(2,2);
+  ctx.clearRect(0,0,c.width,c.height);
+  var w = c.offsetWidth, h = 220;
+  var padL = 45, padR = 10, padT = 20, padB = 30;
+  var cw = w - padL - padR, ch = h - padT - padB;
+  var days = ['4/28','4/29','4/30','5/1','5/2','5/3','今日'];
+  var views = [280,350,420,580,620,710,890];
+  var visits = [18,24,32,45,52,61,78];
+  var rates = [6.4,6.9,7.6,7.8,8.4,8.6,8.8];
+  var maxV = 1000, maxRate = 12;
+  // 右侧Y轴（转化率）
+  // 绘制网格
+  ctx.strokeStyle = '#f0f1f5';
+  ctx.lineWidth = 1;
+  for(var i=0;i<5;i++){
+    var y = padT + ch * i / 4;
+    ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(w-padR,y); ctx.stroke();
+    // 左Y轴
+    var val = Math.round(maxV - (maxV/4)*i);
+    ctx.fillStyle = '#a4a4b8';
+    ctx.font = '9px sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(val, padL-4, y+3);
+    // 右Y轴（转化率）
+    if(i>0){
+      var rateVal = ((maxRate/4)*i).toFixed(1);
+    }
+  }
+  // 转化率右侧Y轴
+  for(var i=0;i<5;i++){
+    var y = padT + ch * i / 4;
+    var rateVal = (maxRate - (maxRate/4)*i).toFixed(1)+'%';
+    ctx.fillStyle = '#a4a4b8';
+    ctx.font = '9px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(rateVal, w-padR+4, y+3);
+  }
+  // 绘制浏览量柱状图
+  var barW = cw / days.length * 0.6;
+  var barGap = cw / days.length;
+  for(var i=0;i<views.length;i++){
+    var x = padL + barGap*i + (barGap - barW)/2;
+    var barH = (views[i]/maxV) * ch;
+    var grad = ctx.createLinearGradient(0, padT+ch-barH, 0, padT+ch);
+    grad.addColorStop(0, 'rgba(225,112,85,0.7)');
+    grad.addColorStop(1, 'rgba(225,112,85,0.2)');
+    ctx.fillStyle = grad;
+    roundRect2(ctx, x, padT+ch-barH, barW, barH, 3);
+    ctx.fill();
+  }
+  // 绘制到店人数折线
+  ctx.beginPath();
+  ctx.strokeStyle = '#00b894';
+  ctx.lineWidth = 2;
+  for(var i=0;i<visits.length;i++){
+    var x = padL + (cw/(days.length-1))*i;
+    var y = padT + ch - (visits[i]/maxV)*ch;
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+  // 绘制转化率折线（右侧Y轴）
+  ctx.beginPath();
+  ctx.strokeStyle = '#6c5ce7';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([5,3]);
+  for(var i=0;i<rates.length;i++){
+    var x = padL + (cw/(days.length-1))*i;
+    var y = padT + ch - (rates[i]/maxRate)*ch;
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+  ctx.setLineDash([]);
+  // X轴标签
+  ctx.fillStyle = '#a4a4b8';
+  ctx.font = '9px sans-serif';
+  ctx.textAlign = 'center';
+  for(var i=0;i<days.length;i++){
+    var x = padL + (cw/(days.length-1))*i;
+    ctx.fillText(days[i], x, h-8);
+  }
+  // 数据点
+  for(var i=0;i<visits.length;i++){
+    var x = padL + (cw/(days.length-1))*i;
+    var y = padT + ch - (visits[i]/maxV)*ch;
+    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(x,y,4,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#00b894'; ctx.beginPath(); ctx.arc(x,y,2.5,0,Math.PI*2); ctx.fill();
+  }
+}
+
+function roundRect2(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.lineTo(x+w-r,y);
+  ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h);
+  ctx.lineTo(x,y+h);
+  ctx.lineTo(x,y+r);
+  ctx.quadraticCurveTo(x,y,x+r,y);
+  ctx.closePath();
+}
+
+/* ========== 修改 switchModule 以初始化新图表 ========== */
+// 在模块1激活时绘制所有新图表
+
+  </script>
+</body>
+</html>
